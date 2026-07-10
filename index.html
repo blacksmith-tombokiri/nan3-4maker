@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101814">
+<title>終盤局面メーカー</title>
+
+<style>
+:root{--bg:#0d1410;--panel:#151f19;--panel2:#1c2921;--line:#314438;--text:#f4f1e8;--muted:#aab7ad;--green:#6bd09a;--gold:#e5c56c;--red:#f09383;--shadow:0 24px 70px rgba(0,0,0,.34)}*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font-family:Inter,"Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif;background:radial-gradient(circle at 20% 0,#1a2d22 0,transparent 34rem),linear-gradient(180deg,#0d1410,#0b100d);min-height:100vh}button,input,select{font:inherit}.app-shell{width:min(720px,100%);margin:0 auto;padding:18px 16px 48px}.hero{display:grid;gap:18px;padding:18px 2px 24px}.eyebrow{margin:0 0 7px;color:var(--green);font-size:13px;font-weight:800;letter-spacing:.12em}.hero h1{margin:0;font-size:clamp(34px,10vw,56px);line-height:1;letter-spacing:-.06em}.generate-btn{min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#73dba5,#48ae79);color:#08110b;font-weight:900;font-size:20px;box-shadow:0 16px 40px rgba(72,174,121,.22);cursor:pointer}.generate-btn:active{transform:translateY(1px)}.result-card,.conditions,.settings{border:1px solid var(--line);background:rgba(21,31,25,.92);border-radius:22px;box-shadow:var(--shadow)}.round-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:17px 18px;border-bottom:1px solid var(--line)}.round-title{font-size:24px;font-weight:900}.round-title b{font-size:16px;color:var(--muted);margin-left:4px}.kyotaku{display:block;margin-top:3px;color:var(--muted);font-size:14px}.mode-badge,.rank-badge{border:1px solid rgba(229,197,108,.35);background:rgba(229,197,108,.09);color:var(--gold);border-radius:999px;font-weight:800}.mode-badge{padding:7px 10px;font-size:12px}.seat-list{display:grid}.seat-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;padding:17px 18px;border-bottom:1px solid rgba(49,68,56,.7)}.seat-row:last-child{border-bottom:0}.seat-mark{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:var(--panel2);color:var(--green);font-size:22px;font-weight:900}.player-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-line{display:flex;align-items:center;gap:8px;margin-bottom:4px}.rank-badge{font-size:11px;padding:3px 7px}.gap-text{color:var(--muted);font-size:12px}.score{font-size:clamp(24px,7vw,34px);font-weight:950;font-variant-numeric:tabular-nums;letter-spacing:-.04em;text-align:right}.score small{font-size:13px;color:var(--muted);margin-left:2px}.actions{padding:14px 0 8px}.secondary-btn{width:100%;min-height:48px;border:1px solid var(--line);border-radius:15px;background:#1b2921;color:var(--text);font-weight:800;cursor:pointer}.minor-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 18px;padding:10px 2px}.text-btn{border:0;background:transparent;color:var(--muted);padding:8px 0;text-decoration:underline;text-underline-offset:4px;cursor:pointer}.conditions{margin-top:8px;padding:18px}.conditions h2{margin:0 0 3px;font-size:22px}.conditions-note{margin:0 0 14px;color:var(--muted);font-size:13px}.player-detail,.target-detail{border:1px solid var(--line);border-radius:15px;background:#111a15;margin:8px 0;overflow:hidden}.player-detail>summary,.target-detail>summary{cursor:pointer;list-style:none;padding:14px 15px;font-weight:800}.player-detail>summary::-webkit-details-marker,.target-detail>summary::-webkit-details-marker{display:none}.player-detail>summary:after,.target-detail>summary:after{content:"＋";float:right;color:var(--green)}.player-detail[open]>summary:after,.target-detail[open]>summary:after{content:"−"}.player-inner{padding:0 10px 10px}.target-detail{background:#17221b}.condition-grid{padding:4px 14px 14px;display:grid;gap:8px}.condition-row{display:grid;grid-template-columns:minmax(110px,1fr) auto;gap:10px;color:var(--muted);font-size:14px}.condition-row b{color:var(--text);font-variant-numeric:tabular-nums}.unreachable{color:var(--red)!important}.settings{margin-top:14px}.settings>summary{cursor:pointer;padding:17px 18px;font-weight:900;list-style:none}.settings>summary::-webkit-details-marker{display:none}.settings>summary:after{content:"＋";float:right;color:var(--green)}.settings[open]>summary:after{content:"−"}.settings-body{border-top:1px solid var(--line);padding:18px;display:grid;gap:15px}label{display:grid;gap:7px;color:var(--muted);font-size:13px;font-weight:700}select,input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;background:#0e1712;color:var(--text);padding:10px 12px;outline:none}.setting-grid,.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}fieldset{border:0;padding:0;margin:0}legend{color:var(--muted);font-size:13px;font-weight:700;margin-bottom:7px}.small-btn{justify-self:start;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:9px 11px;cursor:pointer}footer{padding:20px 4px 0;color:var(--muted);font-size:12px;line-height:1.7}@media(max-width:480px){.app-shell{padding:12px 10px 36px}.hero{padding-top:10px}.seat-row{grid-template-columns:44px minmax(0,1fr) auto;padding:15px 13px;gap:9px}.seat-mark{width:42px;height:42px}.setting-grid,.name-grid{grid-template-columns:1fr}.score{font-size:26px}.condition-row{grid-template-columns:1fr}.condition-row b{text-align:left}}@media print{body{background:white;color:black}.hero,.actions,.conditions,.settings,footer{display:none!important}.app-shell{width:100%;padding:0}.result-card{box-shadow:none;border:1px solid #777;background:white}.seat-mark{background:white;border:1px solid #777;color:black}.player-name,.score,.round-title{color:black}.gap-text,.kyotaku{color:#555}.rank-badge,.mode-badge{color:black;border-color:#777;background:white}}
+
+
+.mode-help-button {
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: .45rem;
+  vertical-align: middle;
+}
+
+.mode-help-button:hover,
+.mode-help-button:focus-visible {
+  background: rgba(127, 127, 127, .16);
+}
+
+.mode-help-panel {
+  margin-top: .75rem;
+  padding: 1rem;
+  border: 1px solid rgba(127, 127, 127, .28);
+  border-radius: 14px;
+  background: rgba(127, 127, 127, .08);
+}
+
+.mode-help-panel h3 {
+  margin: 0 0 .9rem;
+  font-size: 1.05rem;
+}
+
+.mode-help-panel section + section {
+  margin-top: .9rem;
+  padding-top: .9rem;
+  border-top: 1px solid rgba(127, 127, 127, .18);
+}
+
+.mode-help-panel h4 {
+  margin: 0 0 .25rem;
+  font-size: .98rem;
+}
+
+.mode-help-panel p {
+  margin: 0;
+  line-height: 1.7;
+  font-size: .92rem;
+}
+
+
+.round-setting {
+  display: grid;
+  gap: 7px;
+}
+
+.setting-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.segment-option {
+  display: block;
+  color: var(--text);
+}
+
+.segment-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segment-option span {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #0e1712;
+  color: var(--muted);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.segment-option input:checked + span {
+  border-color: rgba(107, 208, 154, .72);
+  background: rgba(107, 208, 154, .14);
+  color: var(--green);
+  box-shadow: inset 0 0 0 1px rgba(107, 208, 154, .18);
+}
+
+.segment-option input:focus-visible + span {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+
+.round-explanations {
+  margin-top: 8px;
+}
+
+.round-explanation {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(127, 127, 127, .08);
+  border: 1px solid rgba(127, 127, 127, .18);
+}
+
+.round-explanation strong {
+  font-size: .9rem;
+}
+
+.round-explanation span {
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.55;
+}
+
+</style>
+</head>
+<body>
+<main class="app-shell">
+  <header class="hero">
+    <div>
+      <p id="eyebrowText" class="eyebrow">残り2局を、どう立ち回る？</p>
+      <h1>終盤局面メーカー</h1>
+    </div>
+    <button id="generateBtn" class="generate-btn">南3局をつくる</button>
+  </header>
+
+  <section id="result" class="result-card" aria-live="polite">
+    <div class="round-head">
+      <div>
+        <span class="round-title"><span id="roundView">南3局</span> <b id="honbaView">0本場</b></span>
+        <span id="kyotakuView" class="kyotaku">供託0本</span>
+      </div>
+      <span id="modeBadge" class="mode-badge">ランダム</span>
+    </div>
+    <div id="seatList" class="seat-list"></div>
+  </section>
+
+  <section class="actions">
+    <button id="conditionToggle" class="secondary-btn">順位条件を見る</button>
+    <div class="minor-actions">
+      <button id="reshuffleBtn" class="text-btn">席だけ再抽選</button>
+      <button id="copyBtn" class="text-btn">共有用テキストをコピー</button>
+    </div>
+  </section>
+
+  <section id="conditions" class="conditions" hidden>
+    <h2>順位条件</h2>
+    <p class="conditions-note">数値だけを整理します。打ち方や狙い方は判定しません。</p>
+    <div id="conditionPlayers"></div>
+  </section>
+
+  <details class="settings" id="settingsPanel">
+    <summary>設定</summary>
+    <div class="settings-body">
+<div class="round-setting">
+        <span class="setting-label">開始局</span>
+        <div class="segmented-control" role="radiogroup" aria-label="開始局">
+          <label class="segment-option">
+            <input type="radio" name="startRound" value="south3" checked>
+            <span>南3局</span>
+          </label>
+          <label class="segment-option">
+            <input type="radio" name="startRound" value="south4">
+            <span>南4局</span>
+          </label>
+        </div>
+        <div class="round-explanations" aria-live="polite">
+          <div class="round-explanation" data-round-help="south3">
+            <strong>南3局</strong>
+            <span>残り2局。次のオーラスをどう迎えるか。</span>
+          </div>
+          <div class="round-explanation" data-round-help="south4" hidden>
+            <strong>南4局</strong>
+            <span>オーラス。この一局でどの着順を取るか。</span>
+          </div>
+        </div>
+
+      </div>
+      <label>生成モード <button type="button" id="modeHelpButton" class="mode-help-button" aria-expanded="false" aria-controls="modeHelpPanel" title="生成モードの説明">？</button>
+        <select id="modeSelect">
+          <option value="random">ランダム</option>
+          <option value="close">全員僅差</option>
+          <option value="runaway">トップ独走</option>
+          <option value="topBattle">トップ争い</option>
+          <option value="secondBattle">2着争い</option>
+          <option value="avoidLast">ラス回避</option>
+          <option value="dealerBattle">親番勝負</option>
+        </select>
+      </label>
+      <div class="setting-grid">
+        <label>本場
+          <select id="honbaSelect">
+            <option value="auto">おまかせ</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="custom">自由入力</option>
+          </select>
+          <input id="honbaCustom" type="number" min="0" max="10" value="4" hidden>
+        </label>
+        <label>供託
+          <select id="kyotakuSelect">
+            <option value="auto">おまかせ</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="custom">自由入力</option>
+          </select>
+          <input id="kyotakuCustom" type="number" min="0" max="10" value="4" hidden>
+        </label>
+      </div>
+      <fieldset>
+        <legend>プレイヤー名</legend>
+        <div class="name-grid">
+          <input id="name0" maxlength="16" value="Aさん" aria-label="プレイヤー1">
+          <input id="name1" maxlength="16" value="Bさん" aria-label="プレイヤー2">
+          <input id="name2" maxlength="16" value="Cさん" aria-label="プレイヤー3">
+          <input id="name3" maxlength="16" value="Dさん" aria-label="プレイヤー4">
+        </div>
+      </fieldset>
+      <button id="resetBtn" class="small-btn">設定を初期化</button>
+    </div>
+  </details>
+
+  <footer>
+    <p id="footerGuide">表示された点棒・席順・本場・供託を実卓へ反映し、南3局から対局を始めてください。</p>
+  </footer>
+</main>
+
+<script>
+// 終盤局面メーカー Ver.1.0 軽量統計近似モデル
+//
+// 牌譜や巨大な実測局面データはブラウザで読み込まない。
+// 開発時の統計解析と10万回シミュレーションで校正した近似定数のみ保持する。
+
+window.SOUTH3_MODEL = Object.freeze({
+  quantileP: [0.001, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.999],
+  gapQuantiles: [
+    [0, 700, 1400, 3800, 8600, 15600, 23900, 29700, 81800],
+    [0, 500, 1000, 2600, 5900, 10700, 16300, 20000, 49300],
+    [0, 600, 1100, 3000, 6700, 11900, 17300, 20600, 32600]
+  ],
+  gapScale: [1.0322, 1.0806, 1.0379],
+  correlation: [
+    [1.0000,  0.0977, -0.0523],
+    [0.0977,  1.0000, -0.1199],
+    [-0.0523, -0.1199, 1.0000]
+  ],
+  honbaWeights: [
+    [0, 0.8855073792], [1, 0.0685122630], [2, 0.0276486500],
+    [3, 0.0114164352], [4, 0.0044661540], [5, 0.0015317560],
+    [6, 0.0006278420], [7, 0.0002318470], [8, 0.0000566750]
+  ],
+  kyotakuWeights: [
+    [0, 0.9194097654], [1, 0.0670856480], [2, 0.0119080600],
+    [3, 0.0013786420], [4, 0.0002016900], [5, 0.0000161910]
+  ]
+});
+
+window.SOUTH4_MODEL = Object.freeze({
+  quantileP: [0.001, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.999],
+  gapQuantiles: [
+    [0, 700, 1500, 4000, 8900, 16000, 24400, 29900, 57318],
+    [0, 500, 1000, 2700, 6200, 11400, 17400, 21600, 38768],
+    [0, 600, 1200, 3200, 7100, 12300, 17700, 21042, 29477]
+  ],
+  gapScale: [1.03, 1, 1],
+  correlation: [
+    [1.0, -0.121372, -0.098335],
+    [-0.121372, 1.0, -0.129926],
+    [-0.098335, -0.129926, 1.0]
+  ],
+  fourthTail: {
+    probability: 0.07,
+    eligibleMin: 5000,
+    eligibleMax: 18000,
+    transferMin: 3000,
+    transferMax: 8000,
+    recipients: [1, 2]
+  },
+  honbaWeights: [
+    [0, 0.8861126171], [1, 0.0634949340], [2, 0.0293120944],
+    [3, 0.0102745096], [4, 0.0068323561], [5, 0.0025757890],
+    [6, 0.0006124941], [7, 0.0004397825], [8, 0.0001727116],
+    [10, 0.0001727116]
+  ],
+  kyotakuWeights: [
+    [0, 0.9244410957], [1, 0.0615619696], [2, 0.0122686963],
+    [3, 0.0014297143], [4, 0.0001258125], [5, 0.0001727116]
+  ]
+});
+
+(() => {
+  'use strict';
+
+  const MODE_LABELS = Object.freeze({
+    random: 'ランダム',
+    close: '全員僅差',
+    runaway: 'トップ独走',
+    topBattle: 'トップ争い',
+    secondBattle: '2着争い',
+    avoidLast: 'ラス回避',
+    dealerBattle: '親番勝負'
+  });
+
+  const ROUND_CONFIG = Object.freeze({
+    south3: { label: '南3局', model: window.SOUTH3_MODEL },
+    south4: { label: '南4局', model: window.SOUTH4_MODEL }
+  });
+
+  const SEATS = ['東', '南', '西', '北'];
+
+  function weightedPick(rows) {
+    const total = rows.reduce((sum, row) => sum + row[1], 0);
+    let cursor = Math.random() * total;
+    for (const row of rows) {
+      cursor -= row[1];
+      if (cursor <= 0) return row[0];
+    }
+    return rows[rows.length - 1][0];
+  }
+
+  function standardNormal() {
+    let u = 0;
+    let v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  function normalCdf(x) {
+    const sign = x < 0 ? -1 : 1;
+    const z = Math.abs(x) / Math.sqrt(2);
+    const t = 1 / (1 + 0.3275911 * z);
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const erf = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) *
+      t * Math.exp(-z * z);
+    return 0.5 * (1 + sign * erf);
+  }
+
+  function cholesky3(matrix) {
+    const l00 = Math.sqrt(matrix[0][0]);
+    const l10 = matrix[1][0] / l00;
+    const l20 = matrix[2][0] / l00;
+    const l11 = Math.sqrt(Math.max(0, matrix[1][1] - l10 * l10));
+    const l21 = (matrix[2][1] - l20 * l10) / l11;
+    const l22 = Math.sqrt(Math.max(0, matrix[2][2] - l20 * l20 - l21 * l21));
+    return [
+      [l00, 0, 0],
+      [l10, l11, 0],
+      [l20, l21, l22]
+    ];
+  }
+
+  function correlatedUniforms(model) {
+    const z = [standardNormal(), standardNormal(), standardNormal()];
+    const l = cholesky3(model.correlation);
+    const x = [
+      l[0][0] * z[0],
+      l[1][0] * z[0] + l[1][1] * z[1],
+      l[2][0] * z[0] + l[2][1] * z[1] + l[2][2] * z[2]
+    ];
+    return x.map(normalCdf);
+  }
+
+  function interpolateQuantile(u, ps, values) {
+    if (u <= ps[0]) return values[0];
+    if (u >= ps[ps.length - 1]) return values[values.length - 1];
+
+    for (let i = 1; i < ps.length; i++) {
+      if (u <= ps[i]) {
+        const ratio = (u - ps[i - 1]) / (ps[i] - ps[i - 1]);
+        return values[i - 1] + (values[i] - values[i - 1]) * ratio;
+      }
+    }
+    return values[values.length - 1];
+  }
+
+  function round100(value) {
+    return Math.round(value / 100) * 100;
+  }
+
+  function random100(min, max) {
+    const low = Math.ceil(min / 100);
+    const high = Math.floor(max / 100);
+    return (low + Math.floor(Math.random() * (high - low + 1))) * 100;
+  }
+
+  function generateGaps(model) {
+    const uniforms = correlatedUniforms(model);
+    return uniforms.map((u, index) => {
+      const raw = interpolateQuantile(u, model.quantileP, model.gapQuantiles[index]);
+      const scale = model.gapScale?.[index] ?? 1;
+      return Math.max(0, round100(raw * scale));
+    });
+  }
+
+  function gapsToScores(gaps, kyotaku) {
+    const [gap12, gap23, gap34] = gaps;
+    const usableTotal = 100000 - kyotaku * 1000;
+    const fourthRaw = (
+      usableTotal - (gap12 + 2 * gap23 + 3 * gap34)
+    ) / 4;
+
+    const fourth = round100(fourthRaw);
+    const scores = [
+      fourth + gap34 + gap23 + gap12,
+      fourth + gap34 + gap23,
+      fourth + gap34,
+      fourth
+    ];
+
+    scores[0] += usableTotal - scores.reduce((sum, value) => sum + value, 0);
+
+    if (scores.some(score => score % 100 !== 0)) return null;
+    if (scores[3] < 0) return null;
+    if (!(scores[0] >= scores[1] && scores[1] >= scores[2] && scores[2] >= scores[3])) {
+      return null;
+    }
+    return scores;
+  }
+
+  function applyFourthTail(scores, model) {
+    const tail = model.fourthTail;
+    if (!tail || Math.random() >= tail.probability) return scores;
+
+    const fourth = scores[3];
+    if (fourth < tail.eligibleMin || fourth >= tail.eligibleMax) return scores;
+
+    const maxTransfer = Math.min(tail.transferMax, fourth);
+    if (maxTransfer < tail.transferMin) return scores;
+
+    const transfer = random100(tail.transferMin, maxTransfer);
+    const recipientIndex = tail.recipients[
+      Math.floor(Math.random() * tail.recipients.length)
+    ];
+
+    const adjusted = [...scores];
+    adjusted[3] -= transfer;
+    adjusted[recipientIndex] += transfer;
+    adjusted.sort((a, b) => b - a);
+    return adjusted;
+  }
+
+  function modeMatches(scores, mode) {
+    const gap12 = scores[0] - scores[1];
+    const gap23 = scores[1] - scores[2];
+    const gap34 = scores[2] - scores[3];
+    const gap14 = scores[0] - scores[3];
+
+    switch (mode) {
+      case 'close': return gap14 <= 12000;
+      case 'runaway': return gap14 >= 40000;
+      case 'topBattle': return gap12 <= 3900;
+      case 'secondBattle': return gap23 <= 2500;
+      case 'avoidLast': return gap34 <= 3900;
+      default: return true;
+    }
+  }
+
+  function shuffle(values) {
+    const result = [...values];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  function rankPlayers(players) {
+    return [...players]
+      .sort((a, b) => b.score - a.score || a.seatIndex - b.seatIndex)
+      .map((player, index) => ({ ...player, rank: index + 1 }));
+  }
+
+  function dealerIsFocus(players) {
+    const ranked = rankPlayers(players);
+    const dealer = ranked.find(player => player.seatIndex === 0);
+    const byRank = Object.fromEntries(ranked.map(player => [player.rank, player]));
+
+    if (dealer.rank === 4) {
+      return byRank[3].score - dealer.score <= 8000;
+    }
+    if (dealer.rank === 3) {
+      return (
+        byRank[2].score - dealer.score <= 3900 ||
+        dealer.score - byRank[4].score <= 3900
+      );
+    }
+    if (dealer.rank === 2) {
+      return byRank[1].score - dealer.score <= 3900;
+    }
+    return false;
+  }
+
+  function resolveSetting(setting, weights) {
+    if (setting.kind === 'fixed') return setting.value;
+    return weightedPick(weights);
+  }
+
+  function buildPlayers(scores, names) {
+    const seatScores = shuffle(scores);
+    const playerNames = shuffle(names);
+    return seatScores.map((score, seatIndex) => ({
+      seatIndex,
+      seat: SEATS[seatIndex],
+      name: playerNames[seatIndex],
+      score
+    }));
+  }
+
+  function generate({
+    startRound = 'south3',
+    mode = 'random',
+    names = ['Aさん', 'Bさん', 'Cさん', 'Dさん'],
+    honbaSetting = { kind: 'auto' },
+    kyotakuSetting = { kind: 'auto' }
+  }) {
+    const roundConfig = ROUND_CONFIG[startRound] || ROUND_CONFIG.south3;
+    const model = roundConfig.model;
+    const safeMode = MODE_LABELS[mode] ? mode : 'random';
+
+    for (let attempt = 0; attempt < 15000; attempt++) {
+      const honba = resolveSetting(honbaSetting, model.honbaWeights);
+      const kyotaku = resolveSetting(kyotakuSetting, model.kyotakuWeights);
+      const gaps = generateGaps(model);
+      let scores = gapsToScores(gaps, kyotaku);
+
+      if (!scores) continue;
+      scores = applyFourthTail(scores, model);
+      if (!modeMatches(scores, safeMode)) continue;
+
+      const players = buildPlayers(scores, names);
+      if (safeMode === 'dealerBattle' && !dealerIsFocus(players)) continue;
+
+      return {
+        startRound,
+        round: roundConfig.label,
+        mode: safeMode,
+        modeLabel: MODE_LABELS[safeMode],
+        honba,
+        kyotaku,
+        players
+      };
+    }
+
+    throw new Error('条件に合う局面を生成できませんでした。設定を変更して再生成してください。');
+  }
+
+  window.EndgameGenerator = Object.freeze({
+    generate,
+    shuffle,
+    MODE_LABELS
+  });
+})();
+
+
+(() => {
+  const ronChild=[1000,1300,1600,2000,2300,2600,2900,3200,3900,4500,5200,5800,6400,7100,7700,8000,12000,16000,24000,32000];
+  const ronDealer=[1500,2000,2400,2900,3400,3900,4400,4800,5800,6800,7700,8700,9600,10600,11600,12000,18000,24000,36000,48000];
+  const tsumoChild=[[300,500],[400,700],[400,800],[500,1000],[600,1200],[700,1300],[700,1500],[800,1600],[1000,2000],[1200,2300],[1300,2600],[1500,2900],[1600,3200],[1800,3600],[2000,3900],[2000,4000],[3000,6000],[4000,8000],[6000,12000],[8000,16000]];
+  const tsumoDealer=[500,700,800,1000,1200,1300,1500,1600,2000,2300,2600,2900,3200,3600,3900,4000,6000,8000,12000,16000];
+  function rank(players){return[...players].sort((a,b)=>b.score-a.score||a.seatIndex-b.seatIndex).map((p,i)=>({...p,rank:i+1}));}
+  function applyRon(players,winnerId,loserId,base,honba,kyotaku){return players.map(p=>({...p,score:p.score+(p.seatIndex===winnerId?base+honba*300+kyotaku*1000:0)-(p.seatIndex===loserId?base+honba*300:0)}));}
+  function applyTsumo(players,winnerId,pay,honba,kyotaku){const dealer=winnerId===0;return players.map(p=>{let delta=0;if(p.seatIndex===winnerId){if(dealer)delta=pay*3+honba*300+kyotaku*1000;else delta=pay[0]*2+pay[1]+honba*300+kyotaku*1000;}else{if(dealer)delta=-(pay+honba*100);else delta=-((p.seatIndex===0?pay[1]:pay[0])+honba*100);}return{...p,score:p.score+delta};});}
+  function achieved(players,id,targetRank){const r=rank(players).find(p=>p.seatIndex===id);return r.rank<=targetRank;}
+  function conditions(situation,playerId,targetRank){const p=situation.players.find(x=>x.seatIndex===playerId),dealer=playerId===0,ronList=dealer?ronDealer:ronChild;const ron=[];for(const opp of situation.players.filter(x=>x.seatIndex!==playerId)){let found=null;for(const pts of ronList){if(achieved(applyRon(situation.players,playerId,opp.seatIndex,pts,situation.honba,situation.kyotaku),playerId,targetRank)){found=pts;break;}}ron.push({opponent:opp,points:found});}
+    let tsumo=null;if(dealer){for(const pay of tsumoDealer){if(achieved(applyTsumo(situation.players,playerId,pay,situation.honba,situation.kyotaku),playerId,targetRank)){tsumo:{pay};tsumo={pay};break;}}}else{for(const pay of tsumoChild){if(achieved(applyTsumo(situation.players,playerId,pay,situation.honba,situation.kyotaku),playerId,targetRank)){tsumo={pay};break;}}}
+    return{ron,tsumo,dealer};}
+  window.Nan3Condition={rank,conditions};
+})();
+
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const seats = ['東', '南', '西', '北'];
+  let current = null;
+
+  function selectedRound() {
+    return document.querySelector('input[name="startRound"]:checked')?.value || 'south3';
+  }
+
+  function roundCopy(startRound) {
+    return startRound === 'south4'
+      ? {
+          label: '南4局',
+          eyebrow: 'この一局で、どの着順を取り切る？',
+          button: '南4局をつくる',
+          footer: '表示された点棒・席順・本場・供託を実卓へ反映し、南4局から対局を始めてください。'
+        }
+      : {
+          label: '南3局',
+          eyebrow: '残り2局を、どう立ち回る？',
+          button: '南3局をつくる',
+          footer: '表示された点棒・席順・本場・供託を実卓へ反映し、南3局から対局を始めてください。'
+        };
+  }
+
+  function syncRoundUi() {
+    const copy = roundCopy(selectedRound());
+    $('eyebrowText').textContent = copy.eyebrow;
+    $('generateBtn').textContent = copy.button;
+    $('footerGuide').textContent = copy.footer;
+  
+    document.querySelectorAll('[data-round-help]').forEach(el => {
+      el.hidden = el.dataset.roundHelp !== selectedRound();
+    });
+}
+
+  function names() {
+    return [0, 1, 2, 3].map(i =>
+      $('name' + i).value.trim() || String.fromCharCode(65 + i) + 'さん'
+    );
+  }
+
+  function setting(selectId, inputId) {
+    const value = $(selectId).value;
+    if (value === 'auto') return { kind: 'auto' };
+    if (value === 'custom') {
+      return {
+        kind: 'fixed',
+        value: Math.max(0, Math.min(10, Number($(inputId).value) || 0))
+      };
+    }
+    return { kind: 'fixed', value: Number(value) };
+  }
+
+  function save() {
+    localStorage.setItem('nan3.settings', JSON.stringify({
+      startRound: selectedRound(),
+      mode: $('modeSelect').value,
+      honba: $('honbaSelect').value,
+      kyotaku: $('kyotakuSelect').value,
+      hc: $('honbaCustom').value,
+      kc: $('kyotakuCustom').value,
+      names: names()
+    }));
+  }
+
+  function load() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('nan3.settings'));
+      if (!saved) return;
+
+      const roundInput = document.querySelector(
+        `input[name="startRound"][value="${saved.startRound || 'south3'}"]`
+      );
+      if (roundInput) roundInput.checked = true;
+
+      $('modeSelect').value = saved.mode || 'random';
+      $('honbaSelect').value = saved.honba || 'auto';
+      $('kyotakuSelect').value = saved.kyotaku || 'auto';
+      $('honbaCustom').value = saved.hc || 4;
+      $('kyotakuCustom').value = saved.kc || 4;
+
+      (saved.names || []).forEach((name, index) => {
+        if ($('name' + index)) $('name' + index).value = name;
+      });
+    } catch {}
+  }
+
+  function updateCustom() {
+    $('honbaCustom').hidden = $('honbaSelect').value !== 'custom';
+    $('kyotakuCustom').hidden = $('kyotakuSelect').value !== 'custom';
+  }
+
+  function ranked() {
+    return Nan3Condition.rank(current.players);
+  }
+
+  function render() {
+    const ranks = ranked();
+    const map = new Map(ranks.map(player => [player.seatIndex, player]));
+
+    $('roundView').textContent = current.round;
+    $('honbaView').textContent = current.honba + '本場';
+    $('kyotakuView').textContent = '供託' + current.kyotaku + '本';
+    $('modeBadge').textContent = current.modeLabel;
+
+    $('seatList').innerHTML = seats.map((seat, index) => {
+      const player = map.get(index);
+      const above = ranks.find(candidate => candidate.rank === player.rank - 1);
+      const gap = above
+        ? `${above.rank}位まで ${(above.score - player.score).toLocaleString()}点`
+        : '';
+
+      return `<article class="seat-row">
+        <div class="seat-mark">${seat}</div>
+        <div>
+          <div class="rank-line">
+            <span class="player-name">${escapeHtml(player.name)}</span>
+            <span class="rank-badge">${player.rank}位</span>
+          </div>
+          ${gap ? `<div class="gap-text">${gap}</div>` : ''}
+        </div>
+        <div class="score">${player.score.toLocaleString()}<small>点</small></div>
+      </article>`;
+    }).join('');
+
+    renderConditions();
+  }
+
+  function escapeHtml(value) {
+    return value.replace(/[&<>'"]/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[char]));
+  }
+
+  function generate() {
+    save();
+
+    try {
+      current = EndgameGenerator.generate({
+        startRound: selectedRound(),
+        mode: $('modeSelect').value,
+        names: names(),
+        honbaSetting: setting('honbaSelect', 'honbaCustom'),
+        kyotakuSetting: setting('kyotakuSelect', 'kyotakuCustom')
+      });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '生成に失敗しました。');
+      return;
+    }
+
+    render();
+    $('conditions').hidden = true;
+    $('conditionToggle').textContent = '順位条件を見る';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderConditions() {
+    const list = ranked();
+
+    $('conditionPlayers').innerHTML = list.map(player => {
+      if (player.rank === 1) {
+        return `<details class="player-detail">
+          <summary>${player.seat}家 ${escapeHtml(player.name)}　1位</summary>
+          <div class="player-inner">
+            <p class="conditions-note">現在1位です。</p>
+          </div>
+        </details>`;
+      }
+
+      const targets = [];
+
+      for (let targetRank = player.rank - 1; targetRank >= 1; targetRank--) {
+        const condition = Nan3Condition.conditions(
+          current,
+          player.seatIndex,
+          targetRank
+        );
+
+        const ron = condition.ron.map(result =>
+          `<div class="condition-row">
+            <span>${escapeHtml(result.opponent.name)}からロン</span>
+            <b class="${result.points === null ? 'unreachable' : ''}">
+              ${result.points === null
+                ? '役満でも届かず'
+                : result.points.toLocaleString() + '点以上'}
+            </b>
+          </div>`
+        ).join('');
+
+        let tsumo = '役満でも届かず';
+        if (condition.tsumo) {
+          tsumo = condition.dealer
+            ? `${condition.tsumo.pay.toLocaleString()}オール以上`
+            : `${condition.tsumo.pay[0].toLocaleString()}/${condition.tsumo.pay[1].toLocaleString()}以上`;
+        }
+
+        targets.push(`<details class="target-detail">
+          <summary>${targetRank}位浮上</summary>
+          <div class="condition-grid">
+            ${ron}
+            <div class="condition-row">
+              <span>ツモ</span>
+              <b class="${!condition.tsumo ? 'unreachable' : ''}">${tsumo}</b>
+            </div>
+          </div>
+        </details>`);
+      }
+
+      return `<details class="player-detail">
+        <summary>${player.seat}家 ${escapeHtml(player.name)}　${player.rank}位</summary>
+        <div class="player-inner">${targets.join('')}</div>
+      </details>`;
+    }).join('');
+  }
+
+  function reshuffle() {
+    if (!current) return;
+
+    const scores = current.players.map(player => player.score);
+    const playerNames = current.players.map(player => player.name);
+
+    if (current.mode === 'dealerBattle') {
+      const replacement = EndgameGenerator.generate({
+        startRound: current.startRound,
+        mode: 'dealerBattle',
+        names: playerNames,
+        honbaSetting: { kind: 'fixed', value: current.honba },
+        kyotakuSetting: { kind: 'fixed', value: current.kyotaku }
+      });
+      current.players = replacement.players;
+    } else {
+      const shuffledScores = EndgameGenerator.shuffle(scores);
+      const shuffledNames = EndgameGenerator.shuffle(playerNames);
+      current.players = shuffledScores.map((score, seatIndex) => ({
+        seatIndex,
+        seat: seats[seatIndex],
+        name: shuffledNames[seatIndex],
+        score
+      }));
+    }
+
+    render();
+  }
+
+  function shareText() {
+    const ranks = ranked();
+    const intro = current.startRound === 'south4'
+      ? 'この点棒を割り振って、南4局から対局開始。'
+      : 'この点棒を割り振って、南3局から対局開始。';
+
+    return [
+      '【終盤局面メーカー】',
+      `${current.round} ${current.honba}本場　供託${current.kyotaku}本`,
+      '',
+      ...seats.map((seat, index) => {
+        const player = current.players[index];
+        const rankedPlayer = ranks.find(item => item.seatIndex === index);
+        return `${seat}家　${player.name}　${player.score.toLocaleString()}点（${rankedPlayer.rank}位）`;
+      }),
+      '',
+      intro
+    ].join('\n');
+  }
+
+  async function copy() {
+    const text = shareText();
+
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+    }
+
+    $('copyBtn').textContent = 'コピーしました';
+    setTimeout(() => {
+      $('copyBtn').textContent = '共有用テキストをコピー';
+    }, 1200);
+  }
+
+  $('generateBtn').addEventListener('click', generate);
+  $('conditionToggle').addEventListener('click', () => {
+    const hidden = $('conditions').hidden;
+    $('conditions').hidden = !hidden;
+    $('conditionToggle').textContent = hidden
+      ? '順位条件を閉じる'
+      : '順位条件を見る';
+  });
+  $('reshuffleBtn').addEventListener('click', reshuffle);
+  $('copyBtn').addEventListener('click', copy);
+
+  document.querySelectorAll('input[name="startRound"]').forEach(input => {
+    input.addEventListener('change', () => {
+      syncRoundUi();
+      save();
+      generate();
+    });
+  });
+
+  [
+    'modeSelect',
+    'honbaSelect',
+    'kyotakuSelect',
+    'honbaCustom',
+    'kyotakuCustom',
+    'name0',
+    'name1',
+    'name2',
+    'name3'
+  ].forEach(id => {
+    $(id).addEventListener('change', () => {
+      updateCustom();
+      save();
+    });
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    localStorage.removeItem('nan3.settings');
+    location.reload();
+  });
+
+  load();
+  updateCustom();
+  syncRoundUi();
+  generate();
+})();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('modeHelpButton');
+  const panel = document.getElementById('modeHelpPanel');
+
+  if (!button || !panel) return;
+
+  button.addEventListener('click', () => {
+    const willOpen = panel.hidden;
+    panel.hidden = !willOpen;
+    button.setAttribute('aria-expanded', String(willOpen));
+    button.textContent = willOpen ? '×' : '？';
+  });
+});
+
+</script>
+
+<div id="modeHelpPanel" class="mode-help-panel" hidden>
+  <h3>生成モードについて</h3>
+  <section><h4>ランダム</h4><p>さまざまな点棒状況を生成します。特定の順位争いに限定せず、通常の終盤局面から珍しい点差状況まで生成されます。</p></section>
+  <section><h4>全員僅差</h4><p>1位から4位までの点差が比較的小さい状況を生成します。誰にでも順位変動の可能性があり、残り2局の結果で順位が大きく入れ替わりやすい状況です。</p></section>
+  <section><h4>トップ独走</h4><p>1位が大きく抜けている状況を生成します。トップを追うのか、現在順位を守るのか。各プレイヤーで異なる立ち回りが求められる状況です。</p></section>
+  <section><h4>トップ争い</h4><p>1位と2位の点差が小さい状況を生成します。トップ争いが中心となりますが、3位・4位の点差状況は毎回異なります。</p></section>
+  <section><h4>2着争い</h4><p>2位と3位の点差が小さい状況を生成します。2着・3着間の順位変動が起こりやすい状況です。</p></section>
+  <section><h4>ラス回避</h4><p>3位と4位の点差が小さい状況を生成します。残り2局でのラス回避争いが起こりやすい状況です。</p></section>
+  <section><h4>親番勝負</h4><p>開始局の親が順位争いの中心にいる状況を生成します。親の連荘や失点によって、順位状況が大きく動く可能性のある局面です。</p></section>
+</div>
+</body>
+</html>
